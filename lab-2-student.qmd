@@ -5,6 +5,7 @@ format: html
 editor: source
 embed-resources: true
 code-tools: true
+echo: true
 ---
 
 # Part 1: GitHub Workflow
@@ -151,7 +152,7 @@ the $x$-axis) and `hindfoot_length` (on the $y$-axis).**
 
 ```{r}
 #| label: scatterplot
-#| 
+
 ggplot(
        data = surveys, 
        mapping = aes(x = weight, 
@@ -167,7 +168,7 @@ We can see there are **a lot** of points plotted on top of each other. Let's try
 
 <!-- Add code to the scatterplot you created for question 4! -->
 ```{r}
-
+#| label: better scatterplot
 ggplot(
        data = surveys, 
        mapping = aes(x = weight, 
@@ -186,7 +187,7 @@ subsets and see if that allows for us to see the trends a bit better.
 
 <!-- Add code to the scatterplot you created for question 4 (and modified for question 5)! -->
 ```{r}
-
+#| better scatterplot with facets
 ggplot(
        data = surveys, 
        mapping = aes(x = weight, 
@@ -203,6 +204,7 @@ ggplot(
 
 <!-- Continue to modify the plot you originally created for question 4! -->
 ```{r}
+#| scatterplot with labels
 ggplot(
        data = surveys, 
        mapping = aes(x = weight, 
@@ -221,11 +223,7 @@ It takes a larger cognitive load to read text that is rotated. It is common prac
 
 <!-- Continue to modify the plot you originally created for question 4! -->
 
-## Boxplots
-
 ```{r}
-#| label: boxplot
-
 ggplot(
        data = surveys, 
        mapping = aes(x = weight, 
@@ -237,14 +235,16 @@ ggplot(
        labs(x = "weight (g)", y = "", title = "weight relation to hindfoot length in mm", 
             subtitle = "hindfoot length (mm)")
 
-
 ```
+
+## Boxplots
 
 **10. Create side-by-side boxplots to visualize the distribution of weight within each species.**
 
 A fundamental complaint of boxplots is that they do not plot the raw data. However, with **ggplot** we can add the raw points on top of the boxplots!
 
 ```{r}
+#| label: boxplot
 ggplot(
        data = surveys, 
        mapping = aes(x = weight, 
@@ -317,17 +317,14 @@ are two colors of points still being plotted. Some of the observations are being
 <!-- Continue to modify the plot you made for question 10! -->
 ```{r}
 
-#using help(geom_boxplot) to find how to modify outliers.
-help(geom_boxplot)
-
+#using help(geom_boxplot) to find how to modify outliers: help(geom_boxplot)
 ggplot(
        data = surveys, 
        mapping = aes(x = weight, 
                      y = species
                     )
        ) + 
-       #using help(geom_boxplot) to find how to modify outliers.
-       geom_boxplot(outlier.alpha = 0) + 
+       geom_boxplot(outlier.alpha = 0) + #outlier.alpha found from help(geom_boxplot)
        geom_jitter(color = "blue", 
                    alpha = 0.1) +
        labs(x = "weight (g)", y = "", title = "distribution of weight in grams by species")
@@ -341,12 +338,48 @@ are better labels for a plot's axes and legend.
 
 <!-- Continue to modify the plot you made for question 10! -->
 
+```{r}
+
+ggplot(
+       data = surveys, 
+       mapping = aes(x = weight, 
+                     y = species
+                    )
+       ) + 
+       geom_boxplot(outlier.alpha = 0) + #outlier.alpha found from help(geom_boxplot)
+       geom_jitter(color = "lightblue4", 
+                   alpha = 0.1) +
+       labs(x = "weight (g)", 
+            y = "species name", 
+            title = "distribution of weight in grams by species") +
+       theme(axis.text.y = element_text(angle = 45)) + 
+       theme(axis.text.x = element_text(angle = 45))
+
+```
+
 Some people (and journals) prefer for boxplots to be stacked with a specific orientation! Let's practice changing the orientation of our boxplots.
 
 **16. Now copy-paste your boxplot code you've been adding to above. Flip the orientation of your boxplots. If you created horizontally stacked boxplots, your boxplots should now be stacked vertically. If you had vertically stacked boxplots, you should now stack your boxplots horizontally!**
 
 ```{r}
 #| label: rotated-boxplot
+
+#source for coord_flip(): https://www.geeksforgeeks.org/how-to-create-horizontal-boxplots-in-r/
+ggplot(
+       data = surveys, 
+              mapping = aes(x = weight, 
+                            y = species
+                            )) + 
+       #outlier.alpha found from help(geom_boxplot)
+       geom_boxplot(outlier.alpha = 0) + 
+       geom_jitter(color = "lightblue4", 
+                    alpha = 0.1) +
+       labs(x = "weight (g)", 
+            y = "species name", 
+            title = "distribution of weight in grams by species") +
+       theme(axis.text.y = element_text(angle = 45)) + 
+       theme(axis.text.x = element_text(angle = 45)) + 
+       coord_flip()
 
 ```
 
@@ -379,14 +412,16 @@ might want to look up the help documentation for `aov()`.
 
 ```{r}
 #| label: anova
-
-species_mod <- aov()
+#was used for documentation: help(aov)
+species_mod <- aov(weight ~ species, surveys)
 
 summary(species_mod)
 ```
 
 **18. Based on the results of the ANOVA F-test, draw a conclusion in context of the hypotheses. Make sure to cite appropriate output from above.**
 
+Conclusion:
+with an F-value of 19916 and a p-value of $2 * 10 ^{-16}$, we reject the null hypothesis in favor of the alternate hypothesis stating there is at least one rodent species with a different mean weight.
 
 # Lab 2 Submission
 
